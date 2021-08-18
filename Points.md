@@ -307,3 +307,123 @@ useEffect(() => {
   // instead of using axios
 });
 ```
+
+## React.Context API and useContext
+
+In React, we build apps using components. React is a tree of components. A component is a single unit of UI. We can pass data between component via props.
+
+```js
+App
+|
+Compa Compb
+|       |
+Compc  Compd
+|
+Compe
+```
+
+This will result in what is called props drilling. It results in unnecessary props. B/cos most of the component wont make use of the props.
+
+Context can be created anywhere in the component tree.
+
+```js
+const CounterContext = React.createContext(0);
+
+.Provider
+.Consumer
+```
+
+The `.Provider` makes the Context value to be avialbale in a component branch.
+The `.Consumer` gets the value of the Context from anywhere in the tree.
+
+```js
+function App() {
+  const [counter, setCounter] = useState(0);
+
+  return (
+    <div>
+      <div>
+        <button onClick={() => setCounter(counter + 1)}>Incr Counter</button>
+      </div>
+      <div>
+        <RenderDisplayCounter />
+      </div>
+    </div>
+  );
+}
+
+function RenderDisplayCounter(props) {
+  return <DisplayCounter />;
+}
+
+function DisplayCounter(props) {
+  return <div>Counter: {props.counter}</div>;
+}
+```
+
+Context cam be a global variable for a branch in the component tree.
+React.createContext should not be called inside a functional component, why? because the Context will be re-created when the functional component re-renders.
+
+We can use the `value` props in the `.Provider` component to pass down the our values dwon the compoent branch.
+
+The value passed to the React.Context can be of any type: primtive type or object type. It can be a string, number, boolean, regexp, function, and objects.
+
+**Assignment on useContext**
+
+```js
+function App() {
+  const [scores, setScores] = useState({ homePoint: 0, awayPoint: 0 });
+
+  return (
+    <div
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        marginTop: "10px",
+        fontSize: "40px",
+        flexDirection: "column",
+        alignItems: "center",
+      }}
+    >
+      <div>
+        <input type="number" id="homePoint" placeholder="Add Home point..." />
+        <button
+          onClick={() =>
+            setScores({ ...scores, homePoint: window.homePoint.value })
+          }
+        >
+          Set Home point
+        </button>
+      </div>
+      <div>
+        <input type="number" id="awayPoint" placeholder="Add Away point..." />
+        <button
+          onClick={() =>
+            setScores({ ...scores, awayPoint: window.awayPoint.value })
+          }
+        >
+          Set Away point
+        </button>
+      </div>
+      <div>
+        <RenderScoreDisplay scores={scores} />
+      </div>
+    </div>
+  );
+}
+
+function RenderScoreDisplay(props) {
+  return <DisplayScores scores={props.scores} />;
+}
+
+function DisplayScores(props) {
+  return (
+    <div>
+      <div>Home Point: {props.scores?.homePoint}</div>
+      <div>Away Point: {props.scores?.awayPoint}</div>
+    </div>
+  );
+}
+```
+
+The above example uses props to pass the `scores` state from the `App` component to the `RenderScoreDisplay` component and to the `DisplayScores` component. Now, I want you to refector the bad practice to use `React.Context` and `useContext` to pass the `scores` state from the `App` component to the `DisplayScores` component without the props drilling.
