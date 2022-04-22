@@ -518,3 +518,26 @@ const ref = createRef();
 ```
 
 createRef and useRef does the same thing, the difference is that useRef is used in functional components while createRef is used in class components.
+
+**Assignment**
+
+_1_
+Create an application that displays a list of fruits, and a button called "Change Theme" This button should change the text color of the fruits when clicked. The color of the fruits shold be in a Context.
+
+The App should look like this:
+
+```
+App
+|
+V
+RenderFruits
+|
+V
+Fruits
+```
+
+The Fruits component will contain the button and the list of fruits. Create the context in the App component and use it in the Fruits component. The Context will carry the color of the fruits.
+
+_2_
+
+create a compoennt that renders list of animals and a button. This button should change the text color of an animal when clicked. use `useRef` to get the reference to the animal node.
