@@ -433,3 +433,88 @@ The `.Consumer` component is used in class components to get the value of the Co
 ## useContext hook
 
 The `useContext` hook does away with using `.Consumer` component. The useContext hook is used in functional components to get the value of the Context value.
+
+# useRef
+
+useRef is used to get a reference to a DOM element or to a component instance.
+
+```js
+import { useRef } from "react";
+```
+
+```js
+const ref = useRef();
+
+ref;
+
+{
+  current: null;
+}
+```
+
+```jsx
+<div>
+  <input type="text" />
+  <button>Focus</button>
+</div>
+```
+
+All DOM elements are based off a super class called `HTMLElement`.A div is an instance of the `HTMLDivElement` class. This class is a subclass of the `HTMLElement` class.
+
+```
+div
+|
+v
+HTMLDivElement
+|
+V
+HTMLElement
+```
+
+The HRMLElement contains all the methods and properties that can be used to manipulate an element. The methods/properties are focus(), innerHTML, innerText, blur(), value, etc. We can get the instances of element in HTML using the document.getElementById() method, document.getElementsByClassName(), document.getElementsByTagName(), document.querySelector(), document.querySelectorAll(), document.createElement(), document.createTextNode(), etc.
+
+To get instances of elements in React JSX code we use the `ref` prop.
+
+```js
+const ref = useRef();
+```
+
+```jsx
+<div>
+  <input type="text" ref={ref} />
+  <button>Focus</button>
+</div>
+```
+
+```js
+ref.current;
+```
+
+This `ref.current` contains the instance of the element. HTMLInputElement instance.
+
+```js
+function App() {
+  const ref = useRef();
+
+  const Fn = () => {};
+
+  return (
+    <div>
+      <input type="text" ref={ref} />
+      <button onClick={Fn}>Example</button>
+    </div>
+  );
+}
+```
+
+# createRef
+
+This is used in class components to get a reference to a DOM element or to a component instance.
+
+```js
+import React, { createRef } from "react";
+
+const ref = createRef();
+```
+
+createRef and useRef does the same thing, the difference is that useRef is used in functional components while createRef is used in class components.
