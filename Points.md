@@ -427,3 +427,9 @@ function DisplayScores(props) {
 ```
 
 The above example uses props to pass the `scores` state from the `App` component to the `RenderScoreDisplay` component and to the `DisplayScores` component. Now, I want you to refector the bad practice to use `React.Context` and `useContext` to pass the `scores` state from the `App` component to the `DisplayScores` component without the props drilling.
+
+The `.Consumer` component is used in class components to get the value of the Context.
+
+## useContext hook
+
+The `useContext` hook does away with using `.Consumer` component. The useContext hook is used in functional components to get the value of the Context value.
