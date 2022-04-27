@@ -797,6 +797,12 @@ function Comp() {
 
 Write a Fruits app. This app should render a list of fruits. I should be able to remove fruits from the list. This app should conditionally render the list of fruits based on the following conditions:
 
+```
+Orange      X
+Apple       X
+Banana      X
+```
+
 - When the fruit list is empty, render a message saying "No fruits in the list"
 
 Use any of the conditional rendering techniques you know.
