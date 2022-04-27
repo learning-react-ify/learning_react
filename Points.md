@@ -541,3 +541,136 @@ The Fruits component will contain the button and the list of fruits. Create the 
 _2_
 
 create a compoennt that renders list of animals and a button. This button should change the text color of an animal when clicked. use `useRef` to get the reference to the animal node.
+
+## useReducer
+
+useReducer is used to manage the state of the application. It is an easy way to use Redux state management in our functional components. useReducer is based on the concept of Redux state management pattern.
+
+In Redux, state are kept globally. The state is managed by the store. The state is just an object having properties. The properties are the state of the application. We can subscribe to the state to get or modify the state. We can dispatch actions to change the state. We have reducer function, this reducer function is a pure function that takes the previous state and an action and returns the new state.
+
+This reducer function is where we can modify the state or return the state. It houses the logic of the state. We have dispatch actions, this are actions that are dispatched to the store. When these actions are dispatched, the store calls the reducer function passing it the state of the store and the action.
+
+```js
+function reducer(state, action) {
+  if (action.type === "INCREMENT") {
+    return { ...state, counter: state.counter + 1 };
+  }
+  if (action.type === "DECREMENT") {
+    return { ...state, counter: state.counter - 1 };
+  }
+  return state;
+}
+
+const initialState = {
+  counter: 0,
+};
+
+const [state, dispatch] = useReducer(reducer, initialState);
+
+state; // { counter: 0 }
+dispatch({ type: "INCREMENT" });
+
+state; // { counter: 1 }
+
+dispatch({ type: "DECREMENT" });
+state; // { counter: 0 }
+
+dispatch();
+```
+
+**Assignment on `useReducer`**
+
+Write a fruits application that lists an array of fruits. We should be able to add new fruit to this list. use the `useReducer` hook to manage this list of fruits. We should be able to add new fruit, remove fruit, and change the name of the fruit.
+
+## Default Props
+
+Default props talks about the initial value of props in a component set by the component itself.
+
+```js
+function Counter({ value }) {
+  return <div>{value}</div>;
+}
+
+// <Counter value={89} />
+<Counter />;
+
+Counter.defaultProps = {
+  value: 0,
+};
+```
+
+This `Counter` component has a prop called `value`.
+
+So to assign a default value to this prop, we can use the `defaultProps` property.
+
+**Assignment on Default Props**
+
+We have this component:
+
+```js
+function MulitComp({counter, name, animals}) {
+  return (
+    <div>
+      <div>Counter: {counter}</div>
+      <div>Name: {name}</div>
+    </div>
+    <div>
+      <div>Animals</div>
+      <ul>
+        {animals.map((animal) => (
+          <li key={animal}>{animal}</li>
+        ))}
+    </div>
+  );
+}
+```
+
+Set the default props of the component.
+
+## Prop Types
+
+Prop Types is used to validate the data type of props in a component. This prop types helps us to know the type of data type that a props should have. Example, a props can be type of string, object, boolean, number, etc.
+
+We use the `prop-types` package to validate the data type of props.
+
+```js
+import PropTypes from "prop-types";
+
+function Counter({ value }) {
+  return <div>{value}</div>;
+}
+
+Counter.propTypes = {
+  value: PropTypes.string,
+};
+
+<Counter value="hello">
+<Counter value={90}>
+<Counter value={true}>
+```
+
+**Assignment on Prop Types**
+
+We have the following component:
+
+```js
+function MulitComp({counter, name, animals}) {
+  return (
+    <div>
+      <div>Counter: {counter}</div>
+      <div>Name: {name}</div>
+    </div>
+    <div>
+      <div>Animals</div>
+      <ul>
+        {animals.map((animal) => (
+          <li key={animal}>{animal}</li>
+        ))}
+    </div>
+  );
+}
+```
+
+The `counter` should be a number, the `name` a string and the `animals` an array of strings. Type check these props using the `prop-types` package.
+
+## Conditional Rendering
