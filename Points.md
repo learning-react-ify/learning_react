@@ -674,3 +674,129 @@ function MulitComp({counter, name, animals}) {
 The `counter` should be a number, the `name` a string and the `animals` an array of strings. Type check these props using the `prop-types` package.
 
 ## Conditional Rendering
+
+This is rendering sections of the UI based on some conditions. The components can return different JSX code based on some comditions.
+
+It is just to if/else statement:
+
+```js
+const cond = true;
+
+if (cond) {
+  // do something
+} else {
+  // do another ting
+}
+
+function cond() {
+  if (cond) {
+    return "Hello";
+  } else {
+    return "World";
+  }
+}
+```
+
+How we can conditionally render JSX code?
+
+- if/else
+- ternary operator
+- && operator
+- switch statement
+
+**if/else statement**
+
+This just entails using the `if/else` statement in JSX.
+
+```js
+function Comp() {
+  const cond = true;
+
+  if (cond) {
+    return <div>Hello</div>;
+  } else {
+    return <div>World</div>;
+  }
+}
+```
+
+**ternary operator**
+This is the use of the ternary operator to conditionally render elements in our components.
+
+For example:
+
+```js
+function Comp() {
+  const cond = true;
+  return cond ? <div>Hello</div> : <div>World</div>;
+}
+```
+
+**&& operator**
+
+The && operator is used to check if the LHS statement is a truthy value and the RHS statement is a truthy value. If the LHS of the && operator is true then the RHS is returned. If the LHS is a falsy value then the LHS is returned.
+
+```js
+true && false; // false
+
+1 && 4; // 4
+0 && 7; // 0
+false && 100; // false
+
+function func() {}
+
+if (true) func();
+
+true && func();
+```
+
+Taking this into the functional component:
+
+```js
+function Comp() {
+  const cond = true;
+  return (
+    <>
+      {cond && <div>Hello</div>}
+      {!cond && <div>World</div>}
+    </>
+  );
+}
+```
+
+**switch statement**
+
+This is the use of the switch statement to conditionally render elements in our components.
+
+```js
+switch (cond) {
+  case true:
+    return 1;
+  case false:
+    return 2;
+  default:
+    return 3;
+}
+```
+
+Exmample:
+
+```js
+function Comp() {
+  const cond = true;
+  switch (cond) {
+    case true:
+      return <div>Hello</div>;
+    case false:
+      return <div>World</div>;
+  }
+}
+```
+
+**Assignment on Conditional Rendering**
+
+Write a Fruits app. This app should render a list of fruits. I should be able to remove fruits from the list. This app should conditionally render the list of fruits based on the following conditions:
+
+- When the fruit list is empty, render a message saying "No fruits in the list"
+
+Use any of the conditional rendering techniques you know.
