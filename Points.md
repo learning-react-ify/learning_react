@@ -806,3 +806,284 @@ Banana      X
 - When the fruit list is empty, render a message saying "No fruits in the list"
 
 Use any of the conditional rendering techniques you know.
+
+# Render Props
+
+Props is used to pass data from the outside world to the component. It is usually from a parnet component to a child component. These props can be of any data, they can be a number, string, boolean, object and even a function.
+
+```jsx
+function Comp({p1, p2}) {
+  // the component will recieve the props passed to it via p1 and p2
+}
+
+const obj = {
+  q:4
+}
+
+<Comp p1={3434} />
+<Comp p1="efdf" p2={obj} />
+```
+
+We can pass a function to a component via props.
+
+```js
+function sum(a,f) { retur a+f}
+
+<Compo p1={sum} />
+
+function Comp({p1, p2}) {
+  const v = p1()
+
+  return <>{v}</>
+}
+```
+
+Render Props is a function props used to share code logic between components. A Render Props is a function that returns a JSX code, the code it returns is rendered by the component.
+
+```js
+function fn() {
+  return <div>Hello World</div>;
+}
+
+function Compo({ fn }) {
+  return fn();
+}
+
+<Compo fn={fn} />;
+```
+
+Attributes of Render Props:
+
+- A Render Props is a function passed as a props to components.
+- The component uses the Render Props as it render logic.
+- The Render Props is shareble between components.
+
+**Use Case**
+
+```js
+function CounterApp({ render }) {
+  return render();
+}
+
+<CounterApp render={() => <h1>I am a Render Props</h1>}>
+```
+
+We can pass data to Render Props:
+
+```js
+function CounterApp({ render, counter }) {
+  return render(counter);
+}
+
+<CounterApp render={(data) => <h1>Counter: {data}</h1>} counter={34} />;
+```
+
+**Assignment on Render Props**
+Create a fruit app. This app will render a list of fruits. Create a component `FruitsList`, this component will receive a Render Props and the fruits to render. Implement this application, so that when a new fruits is add to the list the FruitsList component displays them.
+
+# Events
+
+```html
+<button onclick="fn">Button</button>
+```
+
+In React:
+
+```js
+<button onClick={}>Button</button>
+```
+
+Naming Event Patterns in React
+
+```
+HTML        React
+
+onclick     onClick
+onblur      onBlur
+onfocus     onFocus
+onmouseover onMouseOver
+ondrag      onDrag
+ondragleave onDragLeave
+```
+
+```js
+function Compo() {
+  const fn = () => {
+    // will be executed.
+  };
+
+  return <button onClick={fn}>Button</button>;
+}
+```
+
+We can pass inline functions to events in React
+
+```js
+function Compo() {
+  return (
+    <button
+      onClick={() => {
+        //  will be executed.
+      }}
+      onBlur={() => console.log("Blur")}
+    >
+      Button
+    </button>
+  );
+}
+```
+
+**Parameters**
+
+Event handlers receieve an object from the brower when they are called due to an event. In HTML this parameter is an instance of EventObject.
+
+In React, this parameter is an instacne of SyntheticEvent.
+
+```js
+function Compo() {
+  const fn = (e) => {
+    // will be executed.
+  };
+
+  return <button onClick={(e) => fn(e)}>Button</button>;
+}
+```
+
+# Forms
+
+Forms are a group of elements that does the same work. The `form` element was created to collate/manage the data in these similiar elements.
+
+Form elements:
+
+- input button
+- input boxes (password, text, number, email, submit etc)
+- textarea
+
+```html
+<form name="form" onsubmit="">
+  <input type="text" name="user" />
+  <input type="submit" />
+</form>
+```
+
+In React,
+
+```js
+function Form() {
+  const submitFn = (e) => {
+    const userValue = e.form.user;
+  };
+
+  return (
+    <>
+      <form name="form" onSubmit={submitFn}>
+        <input type="text" name="user" />
+        <input type="submit" />
+      </form>
+    </>
+  );
+}
+```
+
+**Uncontrolled components**
+The form data is managed by the DOM.
+
+```js
+function Form() {
+  const submitFn = (e) => {
+    const userValue = e.form.user;
+  };
+
+  return (
+    <>
+      <form name="form" onSubmit={submitFn}>
+        <input type="text" name="user" />
+        <input type="submit" />
+      </form>
+    </>
+  );
+}
+```
+
+**Controlled components**
+The form data are managed by the component.
+
+```js
+function Form() {
+  /*const [value, setValue] = useState();
+  const [password, setPass] = useState();*/
+
+  const [{ username, password, email }, setFormState] = useState({
+    username: "",
+    pawword: "",
+    email: "",
+  });
+
+  const submitFn = (e) => {
+    const userValue = username;
+    const pass = password;
+  };
+
+  return (
+    <>
+      <form name="form" onSubmit={submitFn}>
+        <input
+          type="text"
+          placeholder="Type username"
+          value={username}
+          onChange={(e) => setFormState({ username: e.target.value + "N" })}
+        />
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setFormState({ password: e.target.value })}
+        />
+        <input
+          type="email"
+          value={email}
+          onChange={(e) => setFormState({ email: e.target.value })}
+        />
+        <input type="submit" />
+      </form>
+    </>
+  );
+}
+```
+
+**Assignment on Forms**
+
+1. Write a Login form in React. The form elements should contain username and password. The form should display the values of the elements when the submit is clicked.
+
+2. Write a Register form. The form should have elements: username, password, retype password, email. The form should log the values of the form elements, also it should check that the password is same as the retype password.
+
+# List and Keys
+
+```js
+function test(fn) {
+  fn("hello", 56);
+}
+
+test((v) => console.log(v));
+```
+
+```js
+{
+  [1, 2, 3, 4, 5].map((v) => {
+    <h1 key={v}>ITem: {v}</h1>;
+  });
+}
+```
+
+The `key` prop is used by React to track the items in a list, this enables it to know track of the items so to know which items are deleted, or change places in the array order. With this React knows which items to re-render.
+
+DOM
+
+```html
+<h1 key="1">ITem: 1</h1>
+<h1 key="2">ITem: 2</h1>
+<h1 key="3">ITem: 3</h1>
+<h1 key="4">ITem: 4</h1>
+<h1 key="5">ITem: 5</h1>
+```
+
+uniqueness
