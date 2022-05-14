@@ -1087,3 +1087,505 @@ DOM
 ```
 
 uniqueness
+
+# Fragment
+
+```html
+<div>
+  <h1>Hi</h1>
+</div>
+<h2>Im H2</h2>
+```
+
+Porting this to React:
+
+```js
+function Comp() {
+  return <div>
+        <h1>Hi</h1>
+      </div>
+      <h2>Im H2</h2>
+}
+```
+
+**A React element must return a single root node.**
+
+No two elements can be the root of the JSX elements returned by a component.
+
+There should be only one root element. Components should return a JSX element with only one lemeent as its root.
+
+```js
+function Comp() {
+  return (
+    <div>
+      <div>
+        <h1>Hi</h1>
+      </div>
+      <h2>Im H2</h2>
+    </div>
+  );
+}
+```
+
+In a table
+
+```js
+function Table() {
+  return (
+    <table>
+      <thead>
+        <tr>
+          <HeadComp />
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>John</td>
+          <td>25</td>
+        </tr>
+        <tr>
+          <td>Jane</td>
+          <td>24</td>
+        </tr>
+      </tbody>
+    </table>
+  );
+}
+
+function HeadComp() {
+  return (
+    <div>
+      <th>Name</th>
+      <th>Age</th>
+    </div>
+  );
+}
+```
+
+The above will generate wrong HTML for the table element:
+
+```html
+<table>
+  <thead>
+    <tr>
+      <div>
+        <th>Name</th>
+        <th>Age</th>
+      </div>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>John</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>Jane</td>
+      <td>24</td>
+    </tr>
+  </tbody>
+</table>
+```
+
+This is where `React.Fragment` comes in.
+
+The `React.Fragment` is an empty element that can be used to group a list of children without adding extra nodes to the DOM.
+
+```js
+import React, { Fragment } from "react";
+
+function HeadComp() {
+  return (
+    <Fragment>
+      <th>Name</th>
+      <th>Age</th>
+    </Fragment>
+  );
+}
+```
+
+The table will be this:
+
+````html
+```html
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Age</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>John</td>
+      <td>25</td>
+    </tr>
+    <tr>
+      <td>Jane</td>
+      <td>24</td>
+    </tr>
+  </tbody>
+</table>
+````
+
+**shorthand fro using Fragment**
+
+Instead of using `React.Fragment` you can use the shorthand `<>`.
+
+```js
+function HeadComp() {
+  return (
+    <>
+      <th>Name</th>
+      <th>Age</th>
+    </>
+  );
+}
+```
+
+# Forwarding Refs
+
+Forwarding Refs is a technique that allows you to pass a ref to a child component.
+
+```js
+function Comp() {
+  const ref = useRef();
+  return (
+    <div>
+      <input ref={ref} type="text" />
+      <ButtonComp />
+    </div>
+  );
+}
+
+function ButtonComp() {
+  return <button>Click Me</button>;
+}
+```
+
+We will the `forwardRef` function to pass refs to child components.
+
+```js
+import React, { forwardRef } from "react";
+
+const ButtonComp = forwardRef(function (props, ref) {
+  const fn = () => {
+    console.log(ref.current);
+  };
+  return <button onClick={fn}>Click Me</button>;
+});
+
+function Comp() {
+  const ref = useRef();
+  return (
+    <div>
+      <input ref={ref} type="text" />
+      <ButtonComp ref={ref} />
+    </div>
+  );
+}
+```
+
+# Error Boundaries
+
+```js
+try {
+  // do something
+} catch (e) {
+  // handle error
+}
+```
+
+```js
+const a = [2, 3];
+
+try {
+  console.log(a[3]);
+} catch (e) {
+  console.log("There is index 3 in the a array.");
+}
+```
+
+The lifecycle used to catch an error in React is the `componentDidCatch` lifecycle.
+
+```js
+<CompA>
+  <CompB />
+
+  <CompC>
+    <CompD />
+  </CompC>
+</CompA>
+```
+
+Let's catch an error in `CompD`:
+
+```js
+class CompD extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: false,
+    };
+  }
+
+  componentDidCatch(err, info) {
+    this.setState({
+      error: true,
+    });
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div>
+          <p>Oh shoot! Something went wrong, dont panic.</p>
+          <p>Refresh this page.</p>
+        </div>
+      );
+    }
+    return (
+      <div>
+        <h1>Hi</h1>
+      </div>
+    );
+  }
+}
+```
+
+Wheneever an error occirs in a component, the `componentDidCatch` lifecycle is called in all its children components that implemented the lifecycle.
+
+```js
+<CompA>
+  <ErrorBoundary>
+    <CompB />
+
+    <CompC>
+      <CompD />
+    </CompC>
+  </ErrorBoundary>
+</CompA>
+```
+
+```js
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: false,
+    };
+  }
+
+  componentDidCatch(err, info) {
+    this.setState({
+      error: true,
+    });
+  }
+
+  render() {
+    if (this.state.error) {
+      return (
+        <div>
+          <p>Oh shoot! Something went wrong, dont panic.</p>
+          <p>Refresh this page.</p>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
+class CompD extends React.Component {
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+    return (
+      <div>
+        <h1>Hi</h1>
+      </div>
+    );
+  }
+}
+```
+
+# Portals
+
+```js
+<CompA>
+  <CompB />
+
+  <CompC>
+    <CompD />
+  </CompC>
+</CompA>
+```
+
+Portals are used to render DOm nodes in any place in the DOM without follwoing the linear structure of the DOM.
+
+To createa a Protal in React we use the `React.createPortal` function.
+
+```js
+React.createPortal(
+  <div>
+    <p>Hi</p>
+  </div>,
+  document.body
+);
+```
+
+```js
+function Portal() {
+  return React.createPortal(
+    <div>
+      <p>Hi</p>
+    </div>,
+    document.body
+  );
+}
+```
+
+```js
+<CompA>
+  <CompB />
+
+  <CompC>
+    <CompD />
+    <Portal />
+  </CompC>
+</CompA>
+```
+
+Thats why, Portals are used to web UIs that do not follow the structure of a webpage.
+
+Example:
+
+- Modal dialogs
+- Aside navigation bars
+- Popups
+- Tooltips
+- Dropdowns
+- etc.
+
+Let's create Modal dialog using Portals:
+
+```js
+function Modal() {
+  return React.createPortal(
+    <div>
+      <div className="modal-backdrop"></div>
+      <div className="modal-body">
+        <p>Hello, I'm Modal</p>
+      </div>
+    </div>,
+    document.body
+  );
+}
+```
+
+We can still pass props to Portals, this is because they are still React components even though they break away from the noral flow of React.
+
+# Data fetching in React
+
+Data fetching entails fetch data from a server and then update the UI with the data in an Recat compoennt.
+
+the key things to do is:
+
+- Call the server
+- Get the response from the server
+- Extract the data from the response
+- then Render the data in the component.
+
+**class components**
+
+```js
+function fetch() {
+  return ["apple", "banana", "orange"];
+}
+
+class DataFetch extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      fruits: [],
+    };
+  }
+
+  componentDidMount() {
+    // here is where we get our fruits data from the server.
+    fetch("https://jsonplaceholder.typicode.com/fruits").then((data) =>
+      this.setState({ fruits: data })
+    );
+    //this.setState(Array.from(["apple", "banana", "orange"]))
+
+    axios.get("https://jsonplaceholder.typicode.com/fruits").then((res) => {
+      this.setState(res.data);
+    });
+    // https://627f6e73be1ccb0a465fa1dc.mockapi.io/:endpoint
+  }
+
+  render() {
+    return this.state.fruits.map((fruit) => (
+      <div>
+        <p>{fruit}</p>
+      </div>
+    ));
+  }
+}
+```
+
+**Note**: Data fetching(network requests, etc) is done in React Component when the component has beeen rendered. In class component, the `componentDidMount` lifecycle is the place where the data fetching is done.
+
+**functional components**
+
+```js
+function DataFetch() {
+  const [{ dogs, loading, error }, setOpts] = useState({
+    dogs: [],
+    loading: true,
+    error: false,
+  });
+
+  useEffect(() => {
+    async function fetchDogs() {
+      // here is where we get our fruits data from the server.
+      try {
+        const data = await axios.get(
+          "https://627f6e73be1ccb0a465fa1dc.mockapi.io/dogs"
+        );
+        setOpts({ dogs: data.data, loading: false });
+      } catch (error) {
+        setOpts({ error: true, loading: false });
+      }
+    }
+    fetchDogs();
+  }, []);
+
+  if (error) {
+    return <p>Something went wrong ...</p>;
+  }
+  if (loading) {
+    return <p>Loading ...</p>;
+  }
+  if (dogs.length === 0) {
+    return <p>No dogs yet.</p>;
+  }
+  return dogs.map((dog) => {
+    return (
+      <div>
+        <p>{dog.name}</p>
+        <img src={dog.avatar} alt={dog.avatar} />
+      </div>
+    );
+  });
+}
+```
+
+# Routing
+
+# Lazy Loading
+
+# Suspense/React.lazy
+
+# Composition
