@@ -1584,8 +1584,123 @@ function DataFetch() {
 
 # Routing
 
-# Lazy Loading
+Routing is the mapping of URLs to components. A URL will load a certain component.
+
+```
+/ -> Home component
+/profile -> Profile compoennt
+/about -> About component.
+```
+
+To add routing to our React project, we use the `react-router-dom` package.
+
+```js
+<BrowserRouter>
+  <App>
+    <CompA>
+      <CompB />
+
+      <CompC>
+        <CompD />
+      </CompC>
+    </CompA>
+  </App>
+</BrowserRouter>
+```
+
+We jhave to import the `BrowserRouter` component from the `react-router-dom` package.
+
+```js
+// App.js
+import { BrowserRouter } from "react-router-dom";
+
+function App() {
+  return <BrowserRouter></BrowserRouter>;
+}
+```
+
+Next, we need to add the `Route` component from the `react-router-dom` package.
+
+```js
+import { Route } from "react-router-dom";
+
+function App() {
+  return (
+    <BrowserRouter>
+      <Router exact path="/" component={Home} />
+      <Router exact path="/profile" component={Profile} />
+      <Router exact path="/about" component={About} />
+    </BrowserRouter>
+  );
+}
+
+function Home() {
+  return <h1>Home</h1>;
+}
+
+function Profile() {
+  return <h1>Profile</h1>;
+}
+
+function About() {
+  return <h1>About</h1>;
+}
+```
+
+**Dynamic Routing**
+
+Dynmaic routing maps a changing URL to a page.
+
+```
+/profile
+```
+
+This page is a static route mapped to a page.
+
+```
+/profile/1232
+/profile/232323
+```
+
+The above URLs are structurally the same. The values of the URLs changes.
+
+To set a dynamic route in React Router, we use the `:` to tell the React Router that a particular is a dynamic route.
+
+```
+/profile/:id
+```
+
+# Higher-Order components
+
+Higher-order functions are function returned by other functions.
+
+```js
+function H(base) {
+  return (number) => {
+    return number * base;
+  };
+}
+
+const fn = H(3);
+
+fn(4); // 12
+fn(9); // 27
+```
+
+a higher-order component is a function that takes a component and returns a new component.
+
+# Composition
 
 # Suspense/React.lazy
 
-# Composition
+Suspense is a React feature that allows us to load component asynchronously.
+
+```js
+<CompC>
+  <CompD />
+</CompC>
+```
+
+# React.memo
+
+# Lazy Loading
