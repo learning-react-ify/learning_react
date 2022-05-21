@@ -1687,9 +1687,310 @@ fn(4); // 12
 fn(9); // 27
 ```
 
-a higher-order component is a function that takes a component and returns a new component.
+A Higher-order component is a function that takes a component and returns a new component.
+
+```js
+function Comp() {
+  return <div>Hello</div>;
+}
+```
+
+A Higher-order component will be this:
+
+```js
+function WithComponent(Component) {
+  return class extends React.Component {
+    render() {
+      return <Component />;
+    }
+  };
+}
+
+function _WithComponent(Component) {
+  return function (props) {
+    return <Component {...props} />;
+  };
+}
+
+const HComp = WithComponent(Comp);
+
+<HComp />;
+```
+
+Exmaples of higher-order components:
+
+- `connect` funciton in `react-redux`
+
+```js
+const HComp = connect(mapStateToProps, mapDispatchToProps)(Comp);
+
+
+function connect(mapStateToProps, mapDispatchToProps) {
+  return function (Comp) {
+    const state = mapStateToProps(state);
+    const dispatch = mapDispatchToProps(dispatch);
+    return function (props) {
+      return <Comp {...props, state, dispatch} />
+    }
+  }
+}
+```
+
+use cases of higher-order components:
+
+- authentication.
+- routing.
+- redux - mapping state.
+- adding more logic to a component.
+
+Let's auth our Components using higher-order components.
+
+```js
+function WithAuth(Comp) {
+  const token = window.localStorage.getItem("token") ? true : false;
+  return () => {
+    return token ? <Comp /> : null;
+  };
+}
+```
+
+Let's build a higher-order component that will use to for routing.
+
+```js
+function WithRoute(Comp, route) {
+  const isRoute = window.location.pathname === route;
+  return () => {
+    return isRoute && <Comp />;
+  };
+}
+```
+
+This:
+
+```js
+function WithComponent(Component) {
+  return function (props) {
+    return <Component {...props} />;
+  };
+}
+```
+
+can be rewrittem as this
+
+```js
+function WithComponent(Component) {
+  function FuncCompo(props) {
+    return <Component {...props} />;
+  }
+
+  return FuncCompo;
+}
+```
+
+# `children` in React
+
+`children` is a **special prop** passed to a component, it contains the components/elments render in-between the said component.
+
+```js
+function Comp({ children }) {
+  return <div>Hi {children}</div>;
+}
+
+<Comp>
+  <h1>Hello</h1>
+</Comp>;
+```
+
+This:
+
+```js
+<ModalBody>
+  <input type="text" placeholder="Enter your username here..." />
+  <input type="password" placeholder="Enter your password here..." />
+</ModalBody>
+```
+
+is the same as this:
+
+```js
+<ModalBody
+  children={
+    <>
+      <input type="text" placeholder="Enter your username here..." />
+      <input type="password" placeholder="Enter your password here..." />
+    </>
+  }
+/>
+```
+
+But this is done by React itself, we cannot do this in our code.
 
 # Composition
+
+Composition is a React pattern that enables us to reuse components. We can compose components into other components to create new components.
+
+```js
+function ModalLoginForm() {
+  return (
+    <div>
+      <div className="modal-head">
+        <h2>Login</h2>
+        <span className="close-icon">X</span>
+      </div>
+      <div className="modal-body">
+        <input type="text" placeholder="Enter your username here..." />
+        <input type="password" placeholder="Enter your password here..." />
+      </div>
+      <div className="modal-footer">
+        <input type="submit" value="Log In" />
+      </div>
+    </div>
+  );
+}
+
+function ModalRegisterForm() {
+  return (
+    <div>
+      <div className="modal-head">
+        <h2>Register</h2>
+        <span className="close-icon">X</span>
+      </div>
+      <div className="modal-body">
+        <input type="text" placeholder="Enter your username here..." />
+        <input type="email" placeholder="Enter your email here..." />
+        <input type="password" placeholder="Enter your password here..." />
+        <input type="password" placeholder="Re-type your password here..." />
+      </div>
+      <div className="modal-footer">
+        <input type="submit" value="Register" />
+      </div>
+    </div>
+  );
+}
+
+function ModalEditForm() {
+  return (
+    <div>
+      <div className="modal-head">
+        <h2>Edit</h2>
+        <span className="close-icon">X</span>
+      </div>
+      <div className="modal-body">
+        <input type="text" placeholder="Enter new usernam here..." />
+      </div>
+      <div className="modal-footer">
+        <input type="submit" value="Edit" />
+      </div>
+    </div>
+  );
+}
+
+function ModalHeader({ children }) {
+  return (
+    <div className="modal-head">
+      <h2>{children}</h2>
+      <span className="close-icon">X</span>
+    </div>
+  );
+}
+
+function ModalBody({ children }) {
+  return <div className="modal-body">{children}</div>;
+}
+
+function ModalFooter({ value }) {
+  return (
+    <div className="modal-footer">
+      <input type="submit" value={value} />
+    </div>
+  );
+}
+
+function Modal({ children, footerValue, headerValue }) {
+  return (
+    <div className="modal">
+      <ModalHeader>{headerValue}</ModalHeader>
+      {children}
+      <ModalFooter value={footerValue} />
+    </div>
+  );
+}
+```
+
+```js
+function ModalLoginForm() {
+  return (
+    <Modal footerValue="Login" headerValue="Log In">
+      <ModalBody>
+        <input type="text" placeholder="Enter your username here..." />
+        <input type="password" placeholder="Enter your password here..." />
+      </ModalBody>
+    </Modal>
+  );
+}
+
+function ModalRegisterForm() {
+  return (
+    <Modal footerValue="Register" headerValue="Register">
+      <ModalBody>
+        <input type="text" placeholder="Enter your username here..." />
+        <input type="email" placeholder="Enter your email here..." />
+        <input type="password" placeholder="Enter your password here..." />
+        <input type="password" placeholder="Re-type your password here..." />
+      </ModalBody>
+    </Modal>
+  );
+}
+
+function ModalEditForm() {
+  const editFn = () => {
+    console.log("Edit");
+  };
+
+  return (
+    <Modal footerValue="Edit" headerValue="Edit">
+      <ModalBody>
+        <input type="text" placeholder="Enter new usernam here..." />
+      </ModalBody>
+    </Modal>
+  );
+}
+```
+
+Ex:
+
+```js
+function SplitPane(props) {
+  return (
+    <div className="SplitPane">
+      <div className="SplitPane-left">{props.left}</div>
+      <div className="SplitPane-right">{props.right}</div>
+    </div>
+  );
+}
+
+function ChatApp() {
+  return <SplitPane left={<Contacts />} right={<Chat />} />;
+}
+
+function BlogApp() {
+  return <SplitPane left={<BlogContent />} right={<TableConents />} />;
+}
+```
+
+# React.memo
+
+React.memo is a React function that is used to memoize components.
+
+```js
+function Component(props) {
+  return <div>{props.name}</div>;
+}
+
+const MemoizedComponent = React.memo(Component, [sUp]);
+```
+
+# useMemo
 
 # Suspense/React.lazy
 
@@ -1700,7 +2001,5 @@ Suspense is a React feature that allows us to load component asynchronously.
   <CompD />
 </CompC>
 ```
-
-# React.memo
 
 # Lazy Loading
